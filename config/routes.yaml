@@ -1,0 +1,8 @@
+controllers:
+    resource: ../src/Controller/
+    type: attribute
+
+api:
+    path: /api
+    controller: App\Controller\DebrickedApiController::index
+    methods: GET|POST

@@ -1,0 +1,114 @@
+version: '3.8'
+
+volumes:
+  database_data:
+    driver: local
+  database_data_new:
+    driver: local
+  rabbitmqetc:
+    driver: local
+  rabbitmqdata:
+    driver: local
+  rabbitmqlogs:
+    driver: local
+
+networks:
+  backend:
+    driver: bridge
+  frontend:
+    driver: bridge
+
+services:
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - backend
+
+  db:
+    platform: linux/amd64
+    image: mysql:8.0
+    ports:
+      - "3308:3306"
+    volumes:
+      - database_data_new:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: docker
+    restart: on-failure
+    networks:
+      - backend
+
+  rabbitmq:
+    image: rabbitmq:3.13-management-alpine
+    environment:
+      RABBITMQ_ERLANG_COOKIE: rabbitmqcookie
+      RABBITMQ_DEFAULT_USER: rabbit
+      RABBITMQ_DEFAULT_PASS: docker
+    volumes:
+      - rabbitmqetc:/etc/rabbitmq/
+      - rabbitmqdata:/var/lib/rabbitmq/
+      - rabbitmqlogs:/var/log/rabbitmq/
+    networks:
+      - backend
+    restart: on-failure
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  php-fpm:
+    image: ghcr.io/debricked/docker-image-php-xdebug:latest
+    environment:
+      PHP_IDE_CONFIG: "serverName=docker.php.cli"
+      BLACKFIRE_SERVER_ID: ${BLACKFIRE_SERVER_ID}
+      BLACKFIRE_SERVER_TOKEN: ${BLACKFIRE_SERVER_TOKEN}
+      BLACKFIRE_CLIENT_ID: ${BLACKFIRE_CLIENT_ID}
+      BLACKFIRE_CLIENT_TOKEN: ${BLACKFIRE_CLIENT_TOKEN}
+      BLACKFIRE_SOCKET: tcp://webserver:8707
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      IN_DOCKER: "true"
+    expose:
+      - 9000
+      - 9001
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - db
+      - rabbitmq
+      - mailhog
+    entrypoint:
+      - /bin/sh
+      - -c
+      - ip -4 route list match 0/0 | awk '{print $$3" host.docker.internal"}' >> /etc/hosts && php-fpm --allow-to-run-as-root
+    restart: on-failure
+    tty: true
+    user: root
+    mem_limit: 2g
+    networks:
+      - backend
+
+  nginx-webserver:
+    image: nginx:latest
+    environment:
+      BLACKFIRE_SERVER_ID: ${BLACKFIRE_SERVER_ID}
+      BLACKFIRE_SERVER_TOKEN: ${BLACKFIRE_SERVER_TOKEN}
+      BLACKFIRE_CLIENT_ID: ${BLACKFIRE_CLIENT_ID}
+      BLACKFIRE_CLIENT_TOKEN: ${BLACKFIRE_CLIENT_TOKEN}
+      BLACKFIRE_SOCKET: tcp://webserver:8707
+    ports:
+      - "8888:90"
+      - "8707:8707"
+    volumes:
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./:/var/www/html
+    depends_on:
+      - php-fpm
+    restart: on-failure
+    user: root
+    networks:
+      - backend
+      - frontend
