@@ -1,2 +1,54 @@
 # debricked_rule_engine
 This application built in php symfony framework and can call debricked APIs to upload and scan dependency files
+# Debricked Rule Engine
+
+This application is built using the PHP Symfony framework and integrates with Debricked APIs to upload and scan dependency files.
+
+## Table of Contents
+
+* [Overview](#overview)
+* [Requirements](#requirements)
+* [Installation](#installation)
+* [Usage](#usage)
+* [API Documentation](#api-documentation)
+* [Contributing](#contributing)
+* [License](#license)
+
+## Overview
+
+The Debricked Rule Engine is designed to simplify the process of scanning and analyzing dependency files using Debricked APIs. This application can be used from any HTTP client tool supporting REST API for uploading and scanning dependency files, making it easier to identify potential security vulnerabilities and trigger notifications.
+
+## Requirements
+
+* PHP 7.4 or higher
+* Symfony 6.1 or higher
+* Debricked API credentials
+
+## Installation
+
+1. Clone the repository: `git clone https://github.com/ashish-patra99/opentext_home_task.git`
+2. Install dependencies: `composer install`
+3. Configure Debricked API credentials: update `.env` with your credentials
+4. Configure Database credentials , slack channel DSN and mailer DSN in .env file to use notification
+5. Execute migrations:- 
+    php bin/console make:migration 
+    php bin/console doctrine:migrations:migrate 
+
+## Usage
+
+1. Create a JWT token: setup your Debricked access token in .env file and send a GET request to http://yourhost/api/jwt (Ex:-http://localhost:8080/apijwt, http://opentextapi.local/api/jwt(virtual host setup))
+
+1. Upload dependency files:
+2. Scan dependency files: Send a POST request to http://yourhost/api/scanFiles attaching single or multiple files in body
+3. Get scan results: Send a GET request to http://yourhost/api/scanPending
+4. Schedule your command  `php bin/console app:send-notification` to check if scanning is completed for uploaded files and trigger notification 
+
+## API Documentation
+
+API documentation can be found at [Debricked API Documentation](https://debricked.com/api/doc/open). Check APIs in category "Dependency File management"
+
+## Contributing
+
+Contributions are welcome! Please submit a pull request with a detailed description of changes.
+
+## License
