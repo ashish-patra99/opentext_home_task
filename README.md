@@ -40,7 +40,7 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
 1. Upload dependency files:
 2. Scan dependency files: Send a POST request to http://yourhost/api/scanFiles attaching single or multiple files in body
 3. Get scan results: Send a GET request to http://yourhost/api/scanPending
-4. Schedule your command  `php bin/console app:send-notification` to check if scanning is completed for uploaded files and trigger notification 
+4. Schedule your command in docker crontab file  `php bin/console app:send-notification` to execute in every 5 mins to check if scanning is completed for uploaded files and trigger notification 
 
 ## API Documentation
 
