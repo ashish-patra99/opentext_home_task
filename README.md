@@ -1,5 +1,4 @@
-# debricked_rule_engine
-This application built in php symfony framework and can call debricked APIs to upload and scan dependency files
+
 # Debricked Rule Engine
 
 This application is built using the PHP Symfony framework and integrates with Debricked APIs to upload and scan dependency files.
