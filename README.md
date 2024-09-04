@@ -34,22 +34,28 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
     php bin/console doctrine:migrations:migrate 
 6. Execute to consume messages: php bin/console messenger:consume async    (php amqp extension must be installed)
 
-7. We can start with docker container 
-
-### Start
-```bash
-docker-compose up -d
-
 
 
 ## Usage
 
-1. Create a JWT token: setup your Debricked access token in .env file and send a GET request to http://yourhost/api/jwt (Ex:-http://localhost:8080/apijwt, http://opentextapi.local/api/jwt(virtual host setup))
+1. We can start with docker container 
+### Start
+```bash
+docker-compose up -d
 
-1. Upload dependency files:
-2. Scan dependency files: Send a POST request to http://yourhost/api/scanFiles attaching single or multiple files in body
-3. Get scan results: Send a GET request to http://yourhost/api/scanPending
-4. Schedule your command in docker crontab file  `php bin/console app:send-notification` to execute in every 5 mins to check if scanning is completed for uploaded files and trigger notification 
+```
+
+### Stop
+```bash
+docker-compose down 
+```
+
+2. Create a JWT token: setup your Debricked access token in .env file and send a GET request to http://yourhost/api/jwt (Ex:-http://localhost:8080/apijwt, http://opentextapi.local/api/jwt(virtual host setup))
+
+3. Upload dependency files:
+4. Scan dependency files: Send a POST request to http://yourhost/api/scanFiles attaching single or multiple files in body
+5. Get scan results: Send a GET request to http://yourhost/api/scanPending
+6. Schedule your command in docker crontab file  `php bin/console app:send-notification` to execute in every 5 mins to check if scanning is completed for uploaded files and trigger notification 
 
 ## API Documentation
 
