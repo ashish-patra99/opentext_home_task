@@ -10,14 +10,13 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Notifier\NotifierInterface;
 use Symfony\Component\Notifier\Notification\Notification;
-use Symfony\Component\Notifier\Recipient\Recipient;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Notifier\Exception\TransportExceptionInterface;
 use App\Service\DebrickedApiService;
 use App\Service\FileUploaderService;
 use Doctrine\ORM\EntityManagerInterface;
-use LDAP\Result;
+
 
 class DebrickedApiController extends AbstractController
 {
@@ -28,14 +27,14 @@ class DebrickedApiController extends AbstractController
     private $fileUploader;
     private $jsonResponse;
     private $entityManager;
-    private $notifier;
+    private $messageBus;
 
-    public function __construct(DebrickedApiService $debrickedAPIService, FileUploaderService $fileUploader,EntityManagerInterface $entityManager, NotifierInterface $notifier)
+    public function __construct(DebrickedApiService $debrickedAPIService, FileUploaderService $fileUploader,EntityManagerInterface $entityManager, MessageBusInterface $messageBus)
     {
         $this->debrickedAPIService = $debrickedAPIService;
         $this->fileUploader = $fileUploader;
         $this->entityManager = $entityManager;
-        $this->notifier = $notifier;
+        $this->messageBus =  $messageBus;
     }
 
     #[Route('/api/jwt', name: 'app_debricked_api_jwt')]
@@ -278,14 +277,14 @@ class DebrickedApiController extends AbstractController
     {
         try{
                 if($_ENV['SEND_NOTIFICATION']){
-                $notification = (new Notification($subject))
-                ->content($content)
-                ->importance($importance);
-                // The receiver of the Notification
-                $recipient = new Recipient($_ENV['ALERT_RECEPIENT_EMAIL']);
+                    $notification = (new Notification($subject))
+                    ->content($content)
+                    ->importance($importance);
+                    // The receiver of the Notification
+                    //$recipient = new Recipient($_ENV['ALERT_RECEPIENT_EMAIL']);
 
-                $this->notifier->send($notification, $recipient);
-
+                    $this->messageBus->dispatch($notification);
+                    echo ('Notification dispatched.');
             }
       
         }catch (TransportExceptionInterface  $e) {

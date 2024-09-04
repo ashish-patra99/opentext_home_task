@@ -32,6 +32,18 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
 5. Execute migrations:- 
     php bin/console make:migration 
     php bin/console doctrine:migrations:migrate 
+6. Execute to consume messages: php bin/console messenger:consume async    (php amqp extension must be installed)
+
+7. We can start with docker container 
+
+### Start
+```bash
+docker-compose up -d
+
+### Stop
+```bash
+docker-compose down
+
 
 ## Usage
 
@@ -46,8 +58,6 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
 
 API documentation can be found at [Debricked API Documentation](https://debricked.com/api/doc/open). Check APIs in category "Dependency File management"
 
-## Contributing
-
-Contributions are welcome! Please submit a pull request with a detailed description of changes.
 
 ## License
+[MIT](https://choosealicense.com/licenses/mit/)
