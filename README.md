@@ -40,9 +40,6 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
 ```bash
 docker-compose up -d
 
-### Stop
-```bash
-docker-compose down
 
 
 ## Usage
