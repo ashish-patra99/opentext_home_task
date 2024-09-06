@@ -29,10 +29,17 @@ The Debricked Rule Engine is designed to simplify the process of scanning and an
 2. Install dependencies: `composer install`
 3. Configure Debricked API credentials: update `.env` with your credentials
 4. Configure Database credentials , slack channel DSN and mailer DSN in .env file to use notification
-5. Execute migrations:- 
-    php bin/console make:migration 
-    php bin/console doctrine:migrations:migrate 
-6. Execute to consume messages: php bin/console messenger:consume async    (php amqp extension must be installed)
+5. Execute migrations:-
+   ```bash
+    php bin/console make:migration
+   ```
+   ```bash
+    php bin/console doctrine:migrations:migrate
+   ``` 
+7. Execute to consume messages ((php amqp extension must be installed)
+  ```bash
+   php bin/console messenger:consume async
+  ```   
 
 
 
